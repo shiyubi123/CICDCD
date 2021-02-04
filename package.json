@@ -1,0 +1,19 @@
+{
+  "name": "cicdcd",
+  "version": "1.0.0",
+  "description": "cicdcd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiyubi123/CICDCD.git"
+  },
+  "author": "shiyubi123",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shiyubi123/CICDCD/issues"
+  },
+  "homepage": "https://github.com/shiyubi123/CICDCD#readme"
+}
