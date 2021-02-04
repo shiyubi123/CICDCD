@@ -21,7 +21,7 @@ function createRunCommandFunc(ssh) {
   }
 }
 
-function createStartFunc(missionFunc) {
+function createStartMissionFunc(missionFunc) {
   return async function start(sshConfig) {
     const ssh = await connectSSH(sshConfig)
     const runCommand = createRunCommandFunc(ssh)
@@ -37,5 +37,5 @@ function startMission(start) {
   return Promise.all(missionArray)
 }
 
-module.exports = { createStartFunc, startMission }
+module.exports = { createStartMissionFunc, startMission }
 

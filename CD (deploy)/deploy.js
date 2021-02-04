@@ -1,7 +1,7 @@
 const archiver = require('archiver');
 const fs = require('fs')
 const path = require('path')
-const { createStartFunc, startMission } = require('./common')
+const { createStartMissionFunc, startMission } = require('./common')
 const { remoteFilePath, remoteDirPath } = require('./config')
 const localPath = path.resolve(__dirname, './../dist.zip')
 const prompts = require('prompts');
@@ -13,9 +13,14 @@ const prompts = require('prompts');
     message: 'Do you want to deploy? (y/n)'
   });
   if (response.deploy) {
-    const start = createStartFunc(deploy)
-    await startMission(start)
-    process.exit(0)
+    const start = createStartMissionFunc(deploy)
+    try {
+      await startMission(start)
+      process.exit(0)
+    } catch (e) {
+      console.log(e)
+      process.exit(1)
+    }
   }
 })();
 

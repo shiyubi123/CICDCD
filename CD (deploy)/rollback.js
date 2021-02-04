@@ -1,13 +1,24 @@
-const { createStartFunc, startMission } = require('./common')
+const { createStartMissionFunc, startMission } = require('./common')
 const { remoteDirPath } = require('./config')
+const prompts = require('prompts');
 
-const start = createStartFunc(rollback)
-startMission(start).then(res => {
-  process.exit(0)
-}).catch(error => {
-  console.log(error)
-  process.exit(1)
-})
+(async () => {
+  const response = await prompts({
+    type: 'confirm',
+    name: 'callback',
+    message: 'Do you want to callback? (y/n)'
+  });
+  if (response.callback) {
+    const start = createStartMissionFunc(rollback)
+    try {
+      await startMission(start)
+      process.exit(0)
+    } catch (e) {
+      console.log(e)
+      process.exit(1)
+    }
+  }
+})();
 
 async function rollback(runCommand, sshConfig) {
   // remove new file first
