@@ -5,9 +5,9 @@ async function connectSSH(sshConfig) {
   const ssh = new NodeSSH()
   try {
     await ssh.connect(sshConfig)
-    console.log(`${sshConfig.name} connect success`)
+    console.log(`${sshConfig.name} ssh连接成功`)
   } catch (err) {
-    console.log(`connect failed ${err}`)
+    console.log(`ssh连接失败 ${err}`)
     process.exit(1)
   }
   return ssh
@@ -21,11 +21,11 @@ function createRunCommandFunc(ssh) {
   }
 }
 
-function createStartMissionFunc(missionFunc) {
+function createMissionFunc(mission) {
   return async function start(sshConfig) {
     const ssh = await connectSSH(sshConfig)
     const runCommand = createRunCommandFunc(ssh)
-    await missionFunc(runCommand, sshConfig, ssh)
+    await mission(runCommand, sshConfig, ssh)
   }
 }
 
@@ -37,5 +37,5 @@ function startMission(start) {
   return Promise.all(missionArray)
 }
 
-module.exports = { createStartMissionFunc, startMission }
+module.exports = { createMissionFunc, startMission }
 

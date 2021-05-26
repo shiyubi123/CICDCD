@@ -1,27 +1,34 @@
-let sshConfigs
 const proConfigs = [
   {
     name: '',
     host: '',
-    port: null,
+    port: 8080,
     username: '',
-    password: ''
+    password: '',
+    remoteDirPath: ''
   }
 ]
-const sitConfigs = [
+const uatConfigs = [
   {
     name: '',
     host: '',
-    port: null,
+    port: 8080,
     username: '',
-    password: ''
+    password: '',
+    remoteDirPath: ''
   }
 ]
-sshConfigs = proConfigs
-let remoteDirPath = ''
-if (process.env.env_config === 'sit') {
-  sshConfigs = sitConfigs
-  remoteDirPath = ''
+
+let sshConfigs, remoteFilePath, remoteDirPath
+handleConfig()
+function handleConfig() {
+  if (process.argv[2] === 'uat') {
+    sshConfigs = uatConfigs
+  } else {
+    sshConfigs = proConfigs
+  }
+  remoteDirPath = sshConfigs.remoteDirPath
+  remoteFilePath = remoteDirPath + '/dist.zip'
 }
-const remoteFilePath = remoteDirPath + '/dist.zip'
+
 module.exports = { sshConfigs, remoteFilePath, remoteDirPath }

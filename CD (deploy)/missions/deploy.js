@@ -1,38 +1,43 @@
 const archiver = require('archiver');
 const fs = require('fs')
 const path = require('path')
-const { createStartMissionFunc, startMission } = require('./common')
-const { remoteFilePath, remoteDirPath } = require('./config')
-const localPath = path.resolve(__dirname, './../dist.zip')
+const { createMissionFunc, startMission } = require('../common')
+const { remoteFilePath, remoteDirPath } = require('../config')
+const localPath = path.resolve(__dirname, './../../dist.zip')
 const prompts = require('prompts');
- 
+
 (async () => {
-  const response = await prompts({
+  let response = await prompts({
     type: 'confirm',
     name: 'deploy',
-    message: 'Do you want to deploy? (y/n)'
-  });
+    message: '是否决定部署? (y/n)'
+  })
   if (response.deploy) {
-    const start = createStartMissionFunc(deploy)
-    try {
-      await startMission(start)
-      process.exit(0)
-    } catch (e) {
-      console.log(e)
-      process.exit(1)
-    }
+    response = await prompts({
+      type: 'confirm',
+      name: 'cover',
+      message: '是否进行覆盖? (y/n)'
+    })
+    const missionFunc = response.cover ? createMissionFunc(coverDeploy) : createMissionFunc(deploy)
+    await startMission(missionFunc)
+    process.exit(0)
   }
-})();
+})()
 
-async function deploy(runCommand, sshConfig, ssh) {
-  const copyName = 'index.html.' + new Date().toLocaleDateString() + '-' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
+async function coverDeploy(runCommand, sshConfig, ssh) {
   await startZip('dist')
   await uploadFile(ssh, sshConfig)
-  // for callback
-  await runCommand(`cp -a index.html ${copyName}`, remoteDirPath)
   await unzipFile(runCommand, sshConfig)
-  // last handle
-  await deleteLastFile(runCommand)
+  process.exit(0)
+}
+async function deploy(runCommand, sshConfig, ssh) {
+  const rollbackFileName = ('index.html.' + new Date().toLocaleDateString()).replace(/\//g, '-') + '-' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
+  await startZip('dist')
+  await uploadFile(ssh, sshConfig)
+  // for the possible rollback in the future
+  await runCommand(`cp -a index.html ${rollbackFileName}`, remoteDirPath)
+  await unzipFile(runCommand, sshConfig)
+  await deleteOldestFile(runCommand)
   process.exit(0)
 }
 // pack and create zip file
@@ -51,7 +56,6 @@ function startZip() {
         reject(err)
         process.exit(1)
       }
-      console.log('\nzip pack success')
       resolve();
     });
     archive.pipe(output);
@@ -64,7 +68,7 @@ async function uploadFile(ssh, sshConfig) {
   try {
     await ssh.putFile(`${localPath}`, `${remoteFilePath}`);
   } catch (err) {
-    console.log(`zip file upload failed \n${err}`)
+    console.log(`压缩文件上传失败 \n${err}`)
     process.exit(1)
   }
 }
@@ -72,15 +76,14 @@ async function uploadFile(ssh, sshConfig) {
 async function unzipFile(runCommand, sshConfig) {
   try {
     await runCommand(`unzip -o dist.zip && rm -f dist.zip`, remoteDirPath);
-    console.log(`${sshConfig.name} deploy success`);
+    console.log(`${sshConfig.name} 部署成功`);
   } catch (err) {
-    console.log(`unzip failed ${err}`)
+    console.log(`解压失败 ${err}`)
     process.exit(1)
   }
 }
-
 //delete last file
-async function deleteLastFile(runCommand) {
+async function deleteOldestFile(runCommand) {
   const result = await runCommand('ls -a -t', remoteDirPath)
   const fileAry = result.stdout.split('\n').filter(item => item.indexOf('html') > 0)
   if (fileAry.length > 5) {
