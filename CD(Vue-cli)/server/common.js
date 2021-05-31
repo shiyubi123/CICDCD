@@ -15,9 +15,9 @@ async function connectSSH(sshConfig) {
   const ssh = new NodeSSH()
   try {
     await ssh.connect(sshConfig)
-    logSuccess(`\n${sshConfig.name} ssh连接成功`)
+    logSuccess(`\n${sshConfig.name} ssh connect successfully`)
   } catch (err) {
-    logError(`ssh连接失败 ${err}`)
+    logError(`ssh connect failed ${err}`)
     process.exit(1)
   }
   return ssh

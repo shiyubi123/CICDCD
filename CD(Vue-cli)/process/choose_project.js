@@ -39,8 +39,8 @@ function createQueryQuestion() {
     type: PRO_TYPE === 'Vue' ? 'list' : 'checkbox',
     choices: [...getCurDirs(path.resolve(CUR_PATH), handleFunc)],
     validate: (dirs) => {
-      if (dirs.length < 1) return '至少需要一个选项'
-      if (dirs.length > 1 && dirs.some(dir => dir.type === 'normal')) return '你只能选多个pureWeb'
+      if (dirs.length < 1) return 'Please choose at least one option'
+      if (dirs.length > 1 && dirs.some(dir => dir.type === 'normal')) return 'You can only choose multiple pure pages or just the custom option'
       return true
     }
   }

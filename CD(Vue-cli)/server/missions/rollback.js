@@ -4,7 +4,7 @@ let remoteDirPath, spinner
 start()
 async function start() {
   await preHandle()
-  spinner = ora('回滚中...').start()
+  spinner = ora('Rolling back...').start()
   const { createMissionFunc, startMission } = await require('../common')
 
   const missionFunc = createMissionFunc(rollback)
@@ -47,14 +47,14 @@ async function rollback(runCommand, sshConfig) {
   const latestFile = fileAry[0]
   // change name to rollback
   await runCommand(`mv ${latestFile} index.html`, remoteDirPath)
-  logSuccess(`${sshConfig.name} 回滚成功!`)
+  logSuccess(`${sshConfig.name} rollback successful!`)
 }
 
 async function checkIfCanRollback(runCommand) {
   const dirFiles = await runCommand('ls -a -t', remoteDirPath)
   const fileAry = dirFiles.stdout.split('\n').filter(item => item.indexOf('html') > 0)
   if (fileAry.length <= 1) {
-    logError('该项目不存在可回滚的文件')
+    logError('There is no file for rollback')
     spinner.stop()
     process.exit(1)
   }

@@ -44,7 +44,7 @@ async function inquirerForServerConfig(project) {
 async function AskIfUseHistoryServerConfig(project) {
   const sshConfig = historyServerConfigs[project].sshConfig
   const message = sshConfig.reduce((prev, next) => prev += ` ${next} (host: ${sshConfigs[next].host}) `
-    , `是否使用ssh历史纪录部署 ? \n  sshConfig:`) + `\n  pathConfig: ${historyServerConfigs[project].pathConfig}\n`
+    , `Whether to use ssh history record deployment ? \n  sshConfig:`) + `\n  pathConfig: ${historyServerConfigs[project].pathConfig}\n`
 
   return await ask([{
     name: 'use',
@@ -57,7 +57,7 @@ async function AskIfSetNewServerConfig() {
   return await ask([{
     name: 'set',
     type: 'confirm',
-    message: '是否为项目进行部署配置 ?'
+    message: 'Whether to config for deploy of this project ?'
   }])
 }
 
@@ -72,14 +72,11 @@ async function inquirerForDeployConfig() {
     sshConfig = (await ask([{
       name: 'server',
       type: 'checkbox',
-      message: '请选择想要部署的服务器',
+      message: 'Please choose your server',
       choices: [...sshChoices(), 'custom'],
       validate: (input) => {
-        if (input.indexOf('custom') > 0 && input.length > 1) {
-          return '选择自定义选项时不能带有其他选项'
-        } else if (input.length < 1) {
-          return '请至少选择一个选项'
-        }
+        if (input.length < 1) return 'Please choose at least one options'
+        if (input.indexOf('custom') > 0 && input.length > 1) return 'You can only choose multiple pure pages or just the custom option'
         return true
       }
     }])).server
@@ -102,7 +99,7 @@ async function inquirerForDeployConfig() {
       {
         name: 'path',
         type: 'list',
-        message: '请选择部署路径',
+        message: 'Please select the deployment path',
         choices: [...pathChoices(), 'custom']
       }
     ])).path
@@ -120,7 +117,7 @@ async function inquirerForDeployConfig() {
     return {
       name: `${name}`,
       type: 'input',
-      message: `请输入服务器的 ${name}:`
+      message: `Please enter the server's ${name}:`
     }
   }
 }
@@ -132,7 +129,8 @@ async function inquirerForPackConfig(project) {
       {
         name: 'useHistory',
         type: 'confirm',
-        message: `是否使用该项目的历史版本打包 (basePath: ${historyPackConfigs[project][USE_ENV].basePath}, decorator: ${historyPackConfigs[project][USE_ENV].decorator})`
+        message: `Whether to use the history record to package
+         (basePath: ${historyPackConfigs[project][USE_ENV].basePath}, decorator: ${historyPackConfigs[project][USE_ENV].decorator})`
       }
     ])).useHistory
   }
@@ -141,14 +139,14 @@ async function inquirerForPackConfig(project) {
     {
       name: 'basePath',
       type: 'input',
-      message: '请输入打包路径，为该项目的资源路径，可以是cdn路径',
+      message: 'Please enter the packaging path',
       default: '',
       when: () => !useHistory
     },
     {
       name: 'decorator',
       type: 'checkbox',
-      message: '请勾选修饰符',
+      message: 'Please choose decorator',
       default: [],
       choices: [
         'noExtract',

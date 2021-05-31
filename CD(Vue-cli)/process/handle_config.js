@@ -11,16 +11,14 @@ function handleConfig(config) {
 }
 
 function handlePackConfig(packConfig) {
-  if (packConfig.useHistory) return
 
   let packConfigs = historyPackConfigs
-
   packConfigs.usePro = USE_PRO
   packConfigs.useEnv = USE_ENV
   packConfigs.usePath = CUR_PATH
-
   packConfigs[USE_PRO] ? true : packConfigs[USE_PRO] = {}
   packConfigs[USE_PRO][USE_ENV] = packConfig
+
   saveJson(packConfigs, path.resolve(__dirname, '../config/pack.json'))
 }
 

@@ -12,13 +12,13 @@ startDeploy()
 async function startDeploy() {
   if (config.proType === 'pureWeb') {
     await deployPureWebs()
-    logSuccess(`页面部署成功!`)
+    logSuccess(`Webpage is deployed successfully!`)
   } else {
     localPath = path.resolve(__dirname, './../../../dist.zip')
     remoteDirPath = config.serverConfig.pathConfig + '/' + config.usePro
     remoteFilePath = remoteDirPath + '/dist.zip'
     await deployProjects()
-    logSuccess(`${config.usePro} 部署成功!`)
+    logSuccess(`${config.usePro} is deployed successfully!`)
   }
   process.exit(0)
 }
@@ -27,7 +27,7 @@ async function deployProjects() {
   response = await prompts({
     type: 'confirm',
     name: 'cover',
-    message: '是否进行覆盖? (y/n)'
+    message: 'Whether to cover ? (y/n)'
   })
   const missionFunc = response.cover ? createMissionFunc(coverDeploy) : createMissionFunc(deploy)
   await startMission(missionFunc)
@@ -46,7 +46,7 @@ async function deployPureWebs() {
       }
       await Promise.all(promiseAry)
     } catch (err) {
-      logError(`文件上传失败 \n${err}`)
+      logError(`Deploy webpage failed \n${err}`)
       process.exit(1)
     }
   })
@@ -79,7 +79,7 @@ function startZip() {
     const output = fs.createWriteStream('dist.zip')
     output.on('close', err => {
       if (err) {
-        logError(`压缩出现错误导致关闭： ${err}`)
+        logError(`Compression error to closed： ${err}`)
         reject(err)
         process.exit(1)
       }
@@ -95,7 +95,7 @@ async function uploadFile(ssh, sshConfig) {
   try {
     await ssh.putFile(`${localPath}`, `${remoteFilePath}`);
   } catch (err) {
-    logError(`文件上传失败： \n${err}`)
+    logError(`Upload file failed： \n${err}`)
     process.exit(1)
   }
 }
@@ -104,7 +104,7 @@ async function unzipFile(runCommand, sshConfig) {
   try {
     await runCommand(`unzip -o dist.zip && rm -f dist.zip`, remoteDirPath);
   } catch (err) {
-    logError(`解压失败 ${err}`)
+    logError(`Unzip file failed ${err}`)
     process.exit(1)
   }
 }
