@@ -62,10 +62,11 @@ async function AskIfSetNewServerConfig() {
 }
 
 async function inquirerForDeployConfig() {
-  let custom = false
+  let sshCustom = false
+  let pathCustom = false
   const sshConfig = await inquirerForSSHConfig()
   const pathConfig = await inquirerForPathConfig() // public path
-  return config = { sshConfig, pathConfig, custom }
+  return config = { sshConfig, pathConfig, sshCustom, pathCustom }
 
   async function inquirerForSSHConfig() {
     let sshConfig
@@ -82,7 +83,7 @@ async function inquirerForDeployConfig() {
     }])).server
 
     if (sshConfig[0] === 'custom') {
-      custom = true
+      sshCustom = true
       sshConfig = await ask([
         createCustomQuestion('host'),
         createCustomQuestion('post'),
@@ -104,6 +105,7 @@ async function inquirerForDeployConfig() {
       }
     ])).path
     if (pathConfig === 'custom') {
+      pathCustom = true
       pathConfig = {
         path: (await ask([
           createCustomQuestion('path')

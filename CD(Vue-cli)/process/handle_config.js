@@ -30,26 +30,38 @@ function handleServerConfig(serverConfig) {
 }
 
 function saveCustomServerConfig(serverConfig) {
-  const { sshConfig, pathConfig } = serverConfig
+  const { sshConfig, pathConfig, sshCustom, pathCustom } = serverConfig
   const serverConfigs = historyServerConfigs
   const sshConfigs = historySSHConfigs
   const pathConfigs = historyPathConfigs
-  serverConfigs[USE_PRO] = {
-    sshConfig: sshConfig.name,
-    pathConfig: pathConfig.path
-  }
-  sshConfigs[sshConfig.name] = sshConfig
-  pathConfigs[PRO_TYPE].push(pathConfig.path)
 
-  if (PRO_TYPE !== 'pureWeb') saveJson(serverConfigs, path.resolve(__dirname, '../config/server.json'))
-  saveJson(sshConfigs, path.resolve(__dirname, '../config/server/ssh.json'))
-  saveJson(pathConfigs, path.resolve(__dirname, '../config/server/publicPath.json'))
-
-  return {
-    sshConfig: sshConfig.name,
-    pathConfig: pathConfig.path,
+  const res = {
+    sshConfig: sshConfig,
+    pathConfig: pathConfig,
     custom: true
   }
+
+  if (PRO_TYPE !== 'pureWeb') {
+    serverConfigs[USE_PRO] = {
+      sshConfig: sshConfig.name,
+      pathConfig: pathConfig.path
+    }
+    saveJson(serverConfigs, path.resolve(__dirname, '../config/server.json'))
+  }
+
+  if (sshCustom) {
+    res.sshConfig = [sshConfig.name]
+    sshConfigs[sshConfig.name] = sshConfig
+    saveJson(sshConfigs, path.resolve(__dirname, '../config/server/ssh.json'))
+  }
+
+  if (pathCustom) {
+    res.pathConfig = pathConfig.path
+    pathConfigs[PRO_TYPE].push(pathConfig.path)
+    saveJson(pathConfigs, path.resolve(__dirname, '../config/server/publicPath.json'))
+  }
+
+  return res
 }
 
 function saveServerConfig(serverConfig) {
