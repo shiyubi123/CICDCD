@@ -24,7 +24,7 @@ function handlePackConfig(packConfig) {
 
 function handleServerConfig(serverConfig) {
   if (!serverConfig) return
-  if (serverConfig.custom) serverConfig = saveCustomServerConfig(serverConfig)
+  if (serverConfig.sshCustom || serverConfig.pathCustom) serverConfig = saveCustomServerConfig(serverConfig)
   else saveServerConfig(serverConfig)
   return serverConfig
 }
