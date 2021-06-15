@@ -1,9 +1,9 @@
 require('./../../global/log')
-const archiver = require('archiver')
 const fs = require('fs')
 const path = require('path')
-const { createMissionFunc, startMission } = require('../common')
 const prompts = require('prompts')
+const archiver = require('archiver')
+const { createMissionFunc, startMission } = require('../common')
 const { serverConfig, curPath, usePro, proType } = require('../config.json')
 
 let localPath, remoteDirPath, remoteFilePath
