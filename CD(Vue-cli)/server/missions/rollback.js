@@ -59,11 +59,3 @@ async function checkIfCanRollback(runCommand) {
     process.exit(1)
   }
 }
-
-function requireGlobal() {
-  require('./../../global/util.js')
-  require('./../../global/variaty')
-  require('./../../global/log.js')
-  require('./../../global/dir.js')
-  require('./../../global/inquirer.js')
-}

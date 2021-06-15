@@ -4,21 +4,21 @@ const fs = require('fs')
 const path = require('path')
 const { createMissionFunc, startMission } = require('../common')
 const prompts = require('prompts')
-const config = require('../config.json')
+const { serverConfig, curPath, usePro, proType } = require('../config.json')
 
 let localPath, remoteDirPath, remoteFilePath
 startDeploy()
 
 async function startDeploy() {
-  if (config.proType === 'pureWeb') {
+  if (proType === 'pureWeb') {
     await deployPureWebs()
     logSuccess(`Webpage is deployed successfully!`)
   } else {
     localPath = path.resolve(__dirname, './../../../dist.zip')
-    remoteDirPath = config.serverConfig.pathConfig + '/' + config.usePro
+    remoteDirPath = serverConfig.pathConfig + '/' + usePro
     remoteFilePath = remoteDirPath + '/dist.zip'
     await deployProjects()
-    logSuccess(`${config.usePro} is deployed successfully!`)
+    logSuccess(`${usePro} is deployed successfully!`)
   }
   process.exit(0)
 }
@@ -35,7 +35,6 @@ async function deployProjects() {
 
 async function deployPureWebs() {
   const missionFunc = createMissionFunc(async function (runCommand, sshConfig, ssh) {
-    const { usePro, curPath, serverConfig } = config
     const promiseAry = []
     try {
       for (let i = 0; i < usePro.length; i++) {

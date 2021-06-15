@@ -1,5 +1,4 @@
-requireGlobal()
-
+require('./global')
 const { chooseProject } = require('./process/choose_project')
 const { getProConfig } = require('./process/get_config')
 const { handleConfig } = require('./process/handle_config')
@@ -21,12 +20,4 @@ async function start() {
   } catch (e) {
     logError(e.message)
   }
-}
-
-function requireGlobal() {
-  require('./global/util.js')
-  require('./global/variaty')
-  require('./global/log.js')
-  require('./global/dir.js')
-  require('./global/inquirer.js')
 }

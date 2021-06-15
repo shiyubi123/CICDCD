@@ -5,9 +5,11 @@ let sshConfigs = getSSHConfigs()
 
 function getSSHConfigs() {
   const ary = []
-  serverConfig.sshConfig.forEach(item => {
-    ary.push(serverSSHConfigs[item])
-  })
+  if (serverConfig) {
+    serverConfig.sshConfig.forEach(item => {
+      ary.push(serverSSHConfigs[item])
+    })
+  }
   return ary
 }
 
